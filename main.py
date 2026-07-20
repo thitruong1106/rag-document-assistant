@@ -1,9 +1,19 @@
-from src.loader import load_and_chunk
+from src.loader import load_document, chunk_text
 from src.vector_store import store_chunks
 from src.ai_insights import answer_question
 
-chunks = load_and_chunk("test.txt")
-collection = store_chunks(chunks)
+file_path = "text.pdf"
 
-answer = answer_question(collection, "What were the Q3 results?")
+try:
+    text = load_document(file_path)
+except ValueError as error:
+    print(f"Document loading failed: {error}")
+    raise SystemExit
+
+chunks = chunk_text(text)
+db_store = store_chunks(chunks)
+
+user_in = input("What question do you have about this document? ")
+
+answer = answer_question(db_store, user_in)
 print(answer)
